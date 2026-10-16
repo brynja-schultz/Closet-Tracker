@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Closet</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1 class="brand">Closet</h1>
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-view="closet" role="tab">My closet</button>
+      <button class="tab" data-view="insights" role="tab">Usage</button>
+    </nav>
+    <button id="addBtn" class="btn primary">+ Add item</button>
+  </header>
+
+  <main>
+    <!-- CLOSET VIEW -->
+    <section id="view-closet" class="view">
+      <div class="toolbar">
+        <div id="filters" class="chips" role="group" aria-label="Filter by type"></div>
+        <div class="toolbar-right">
+          <input id="search" type="search" placeholder="Search brand, color, material…" />
+          <select id="sort" aria-label="Sort">
+            <option value="recent">Recently added</option>
+            <option value="most">Most worn</option>
+            <option value="least">Least worn</option>
+            <option value="lastworn">Last worn</option>
+            <option value="price">Price (high → low)</option>
+          </select>
+        </div>
+      </div>
+      <div id="grid" class="grid"></div>
+      <div id="empty" class="empty" hidden>
+        <p class="empty-title">Your closet is empty</p>
+        <p>Add a photo of a piece of clothing to get started.</p>
+        <button class="btn primary" onclick="openEditor()">+ Add your first item</button>
+      </div>
+    </section>
+
+    <!-- INSIGHTS VIEW -->
+    <section id="view-insights" class="view" hidden>
+      <div id="stats" class="stats"></div>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Wears per month</h2>
+          <select id="insightCat" aria-label="Item type"></select>
+        </div>
+        <div id="monthlyChart" class="chart"></div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <h2>Most worn</h2>
+          <ol id="mostWorn" class="rank"></ol>
+        </div>
+        <div class="panel">
+          <h2>Needs some love</h2>
+          <p class="muted small">Not worn in the last 90 days</p>
+          <ol id="leastWorn" class="rank"></ol>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Wears by item type</h2>
+        <div id="byCategory" class="hbars"></div>
+      </div>
+      <div class="panel data-tools">
+        <h2>Your data</h2>
+        <p class="muted small">Everything is stored privately in this browser. Export a backup to move it to another device.</p>
+        <div class="row">
+          <button id="exportBtn" class="btn">Export backup</button>
+          <label class="btn">Import backup<input id="importFile" type="file" accept="application/json" hidden /></label>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ADD / EDIT DIALOG -->
+  <dialog id="editor" class="modal">
+    <form id="editorForm" method="dialog">
+      <div class="modal-head">
+        <h2 id="editorTitle">Add item</h2>
+        <button type="button" class="icon-btn" data-close aria-label="Close">×</button>
+      </div>
+      <div class="editor-body">
+        <label class="photo-drop" id="photoDrop">
+          <img id="photoPreview" alt="" hidden />
+          <span id="photoHint">Click or drop a photo</span>
+          <input id="photoInput" type="file" accept="image/*" hidden />
+        </label>
+        <div class="fields">
+          <label class="full">Type
+            <select name="category" required></select>
+          </label>
+          <label>Brand<input name="brand" /></label>
+          <label>Style<input name="style" placeholder="e.g. button-down, wide-leg" /></label>
+          <label>Color<input name="color" /></label>
+          <label>Size<input name="size" /></label>
+          <label>Price<input name="price" type="number" min="0" step="0.01" placeholder="0.00" /></label>
+          <label>Material<input name="material" placeholder="e.g. 100% cotton" /></label>
+          <label class="check"><input name="onSale" type="checkbox" /> Bought on sale</label>
+          <label class="check"><input name="altered" type="checkbox" /> Altered / tailored</label>
+          <label class="full" id="alterNotesWrap" hidden>Alteration notes<input name="alterationNotes" placeholder="e.g. hemmed 2 in." /></label>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" id="deleteBtn" class="btn danger" hidden>Delete</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn" data-close>Cancel</button>
+        <button type="submit" class="btn primary">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ITEM DETAIL DIALOG -->
+  <dialog id="detail" class="modal wide">
+    <div class="modal-head">
+      <h2 id="detailTitle"></h2>
+      <button type="button" class="icon-btn" data-close aria-label="Close">×</button>
+    </div>
+    <div class="detail-body">
+      <img id="detailPhoto" class="detail-photo" alt="" />
+      <div class="detail-info">
+        <dl id="detailFields" class="kv"></dl>
+        <div id="detailStats" class="mini-stats"></div>
+        <div class="log-row">
+          <input id="wearDate" type="date" />
+          <button id="logWearBtn" class="btn primary">Log wear</button>
+        </div>
+        <h3>Wears, last 12 months</h3>
+        <div id="itemChart" class="chart small"></div>
+        <h3>History</h3>
+        <ul id="wearList" class="wear-list"></ul>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button id="editItemBtn" class="btn">Edit details</button>
+    </div>
+  </dialog>
+
+  <div id="tooltip" class="tooltip" hidden></div>
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
